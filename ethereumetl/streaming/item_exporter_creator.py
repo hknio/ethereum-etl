@@ -21,6 +21,7 @@
 #  SOFTWARE.
 
 from blockchainetl.jobs.exporters.console_item_exporter import ConsoleItemExporter
+from blockchainetl.jobs.exporters.s3_item_exporter import S3ItemExporter
 
 
 def create_item_exporter(output):
@@ -56,6 +57,18 @@ def create_item_exporter(output):
                         ListFieldItemConverter('topics', 'topic', fill=4)])
     elif item_exporter_type == ItemExporterType.CONSOLE:
         item_exporter = ConsoleItemExporter()
+    elif item_exporter_type == ItemExporterType.S3:
+        from blockchainetl.jobs.exporters.converters.unix_timestamp_item_converter import UnixTimestampItemConverter
+        from blockchainetl.jobs.exporters.converters.int_to_decimal_item_converter import IntToDecimalItemConverter
+        from blockchainetl.jobs.exporters.converters.list_field_item_converter import ListFieldItemConverter
+        item_exporter = S3ItemExporter(bucket="poap-scan-v2-data", converters=[UnixTimestampItemConverter(), IntToDecimalItemConverter(), ListFieldItemConverter('topics', 'topic', fill=4)]
+                , filename_mapping={'block': 'blocks.csv',
+            'transaction': 'transactions.csv',
+            'log': 'logs.json',
+            'token_transfer': 'token_transfers.csv',
+            'trace': 'traces.csv',
+            'contract':  'contracts.json',
+            'token': 'tokens.json'})
     else:
         raise ValueError('Unable to determine item exporter type for output ' + output)
 
@@ -67,6 +80,8 @@ def determine_item_exporter_type(output):
         return ItemExporterType.PUBSUB
     elif output is not None and output.startswith('postgresql'):
         return ItemExporterType.POSTGRES
+    elif output is not None and output == 's3':
+        return ItemExporterType.S3
     elif output is None or output == 'console':
         return ItemExporterType.CONSOLE
     else:
@@ -77,4 +92,5 @@ class ItemExporterType:
     PUBSUB = 'pubsub'
     POSTGRES = 'postgres'
     CONSOLE = 'console'
+    S3 = 's3'
     UNKNOWN = 'unknown'
