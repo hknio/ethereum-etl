@@ -61,7 +61,7 @@ def create_item_exporter(output):
         from blockchainetl.jobs.exporters.converters.unix_timestamp_item_converter import UnixTimestampItemConverter
         from blockchainetl.jobs.exporters.converters.int_to_decimal_item_converter import IntToDecimalItemConverter
         from blockchainetl.jobs.exporters.converters.list_field_item_converter import ListFieldItemConverter
-        item_exporter = S3ItemExporter(bucket="poap-scan-v2-data", converters=[UnixTimestampItemConverter(), IntToDecimalItemConverter(), ListFieldItemConverter('topics', 'topic', fill=4)]
+        item_exporter = S3ItemExporter(bucket="poap-scan-v2-data", converters=[UnixTimestampItemConverter()]
                 , filename_mapping={'block': 'blocks.csv',
             'transaction': 'transactions.csv',
             'log': 'logs.json',

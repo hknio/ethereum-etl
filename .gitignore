@@ -1,3 +1,5 @@
+*.csv
+*.json
 *envvars.sh*
 last_block_synced.txt
 # Byte-compiled / optimized / DLL files
