@@ -13,7 +13,7 @@ from uuid import uuid4
 
 class S3ItemExporter(CompositeItemExporter):
 
-    def __init__(self, filename_mapping=None, bucket=None, converters=()):
+    def __init__(self, filename_mapping=None, bucket=None, converters=(), env='dev', chain='ethereum'):
         self.filename_mapping = {
                 'block': 'blocks.csv',
                 'transaction': 'transactions.csv',
@@ -31,10 +31,12 @@ class S3ItemExporter(CompositeItemExporter):
         self.converter = CompositeItemConverter(converters)
         self.logger = logging.getLogger('S3ItemExporter')
         self.s3 = boto3.client('s3')
+        self.ENV = env
+        self.CHAIN = chain
 
 
-    def upload(self, location, filename,type, block_date, item_id):
-            self.s3.upload_file(filename, location, "data/dev/ethereum/{}/block_date={}/{}".format(filename.split('.')[0], block_date, item_id))
+    def upload(self, location, filename, type, block_date, item_id):
+            self.s3.upload_file(filename, location, "data/{}/{}/{}/block_date={}/{}".format(self.ENV, self.CHAIN, filename.split('.')[0], block_date, item_id))
 
     def export_items(self, items):
         for item in items:
@@ -51,16 +53,15 @@ class S3ItemExporter(CompositeItemExporter):
             if file.endswith('csv'):
                 csv.field_size_limit(sys.maxsize)
                 reader = csv.DictReader(f, delimiter=",")
-                self.logger.info(file)
                 next(reader)
-                for row in reader:  # each row is a list
+                for row in reader:
                     rows.append(row.get('item_timestamp'))
             elif file.endswith('json'):
                 for i in f:
                     data = json.loads(i)
                     rows.append(data.get('item_timestamp'))
 
-            minimus = min(rows, key=lambda x: datetime.strptime(x.split('T')[0], '%Y-%m-%d')) #.strftime('%Y-%m-%d') )
+            minimus = min(rows, key=lambda x: datetime.strptime(x.split('T')[0], '%Y-%m-%d'))
             return minimus.split('T')[0]
 
     def close(self):
@@ -80,7 +81,7 @@ class S3ItemExporter(CompositeItemExporter):
             if counter is not None and (counter.increment() - 1) > 0 and (os.stat(file.name).st_size > 0):
                 self.logger.info('{} items exported: {}'.format(item_type, counter.increment() - 1))
                 self.upload(self.bucket, file.name, item_type, self.extract_date_from_file(file.name), str(uuid4()) + '_' + file.name) # item.get('item_id') + '.' + self.filename_mapping[item.get('type')].split('.')[1])
-                self.logger.info("Uploaded {} to S3".format(item_type))
+                self.logger.info('Uploaded {} to S3'.format(item_type))
                 self.flush(file)
-                self.logger.info("Flushed {} file".format(item_type))
+                self.logger.info('Flushed {} file'.format(item_type))
         self.open()
