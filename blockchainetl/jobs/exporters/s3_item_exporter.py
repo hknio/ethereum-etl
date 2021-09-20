@@ -13,7 +13,7 @@ from uuid import uuid4
 
 class S3ItemExporter(CompositeItemExporter):
 
-    def __init__(self, filename_mapping=None, bucket=None, converters=(), env='dev', chain='ethereum'):
+    def __init__(self, filename_mapping=None, bucket=None, converters=(), environment='dev', chain='ethereum'):
         self.filename_mapping = {
                 'block': 'blocks.csv',
                 'transaction': 'transactions.csv',
@@ -31,12 +31,12 @@ class S3ItemExporter(CompositeItemExporter):
         self.converter = CompositeItemConverter(converters)
         self.logger = logging.getLogger('S3ItemExporter')
         self.s3 = boto3.client('s3')
-        self.ENV = env
+        self.ENVIRONMENT = environment
         self.CHAIN = chain
 
 
     def upload(self, location, filename, type, block_date, item_id):
-            self.s3.upload_file(filename, location, "data/{}/{}/{}/block_date={}/{}".format(self.ENV, self.CHAIN, filename.split('.')[0], block_date, item_id))
+            self.s3.upload_file(filename, location, "data/{}/{}/{}/block_date={}/{}".format(self.ENVIRONMENT, self.CHAIN, filename.split('.')[0], block_date, item_id))
 
     def export_items(self, items):
         for item in items:
