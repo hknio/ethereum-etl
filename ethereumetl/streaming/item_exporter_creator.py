@@ -61,7 +61,7 @@ def create_item_exporter(output, **kwargs):
         from blockchainetl.jobs.exporters.converters.unix_timestamp_item_converter import UnixTimestampItemConverter
         from blockchainetl.jobs.exporters.converters.int_to_decimal_item_converter import IntToDecimalItemConverter
         from blockchainetl.jobs.exporters.converters.list_field_item_converter import ListFieldItemConverter
-        item_exporter = S3ItemExporter(bucket=output.split('//')[-1], converters=[UnixTimestampItemConverter()], env=kwargs.get('env','dev'), chain=kwargs.get('chain', 'ethereum')
+        item_exporter = S3ItemExporter(bucket=output.split('//')[-1], converters=[UnixTimestampItemConverter()], environment=kwargs.get('environment','dev'), chain=kwargs.get('chain', 'ethereum')
                 , filename_mapping={'block': 'blocks.csv',
             'transaction': 'transactions.csv',
             'log': 'logs.json',
