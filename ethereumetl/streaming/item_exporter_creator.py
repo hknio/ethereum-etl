@@ -54,7 +54,7 @@ def create_item_exporter(output, **kwargs):
                 'trace': create_insert_statement_for_table(TRACES),
             },
             converters=[UnixTimestampItemConverter(), IntToDecimalItemConverter(),
-                        ListFieldItemConverter('topics', 'topic', fill=4)])
+                        ListFieldItemConverter('topics', 'topic', fill=6)])
     elif item_exporter_type == ItemExporterType.CONSOLE:
         item_exporter = ConsoleItemExporter()
     elif item_exporter_type == ItemExporterType.S3:
