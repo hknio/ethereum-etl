@@ -1,6 +1,8 @@
-FROM python:3.6
-MAINTAINER Evgeny Medvedev <evge.medvedev@gmail.com>
+FROM --platform=linux/amd64 python:3.8
 ENV PROJECT_DIR=ethereum-etl
+ENV PROVIDER_URI=https://
+ENV AWS_ACCESS_KEY_ID="AKIA22PWBDLC4WZ7P3OL"
+ENV AWS_SECRET_ACCESS_KEY="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"
 
 RUN mkdir /$PROJECT_DIR
 WORKDIR /$PROJECT_DIR
@@ -12,4 +14,7 @@ ENV TINI_VERSION v0.18.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 RUN chmod +x /tini
 
-ENTRYPOINT ["/tini", "--", "python", "ethereumetl"]
+# command line working like so
+# docker run --rm --name ethereum-etl ethereum-etl:f9296f0573111f8200e65ade27a986f2dbe8d620  stream --chain ethereum --output s3://poap-scan-v2-data --environment test --provider-uri https://blue-aged-sky.quiknode.pro/c61b75ade31005d16b540da23759a45a9d4db7a9/ -e block,transaction --batch-size 10 --start-block 12345678
+
+ENTRYPOINT ["/tini", "--", "python", "ethereumetl", "stream", "--chain", "ethereum", "--output", "s3://poap-scan-v2-data", "--environment", "test", "--provider-uri", "https://blue-aged-sky.quiknode.pro/c61b75ade31005d16b540da23759a45a9d4db7a9/", "-e", "block,transaction,log,trace,token_transfer,contract,receipt,token", "--batch-size", "10", "--start-block", "12345678"]
