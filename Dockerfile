@@ -1,6 +1,7 @@
 FROM python:3.6
 MAINTAINER Evgeny Medvedev <evge.medvedev@gmail.com>
 ENV PROJECT_DIR=ethereum-etl
+ENV PROVIDER_URI=https://
 
 RUN mkdir /$PROJECT_DIR
 WORKDIR /$PROJECT_DIR
