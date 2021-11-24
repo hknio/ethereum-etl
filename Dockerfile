@@ -1,4 +1,5 @@
-FROM --platform=linux/amd64 python:3.8
+FROM python:3.6
+MAINTAINER Evgeny Medvedev <evge.medvedev@gmail.com>
 ENV PROJECT_DIR=ethereum-etl
 ENV PROVIDER_URI=https://
 
