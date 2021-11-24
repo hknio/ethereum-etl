@@ -12,4 +12,4 @@ ENV TINI_VERSION v0.18.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 RUN chmod +x /tini
 
-ENTRYPOINT ["/tini", "--", "python", "ethereumetl", "stream", "--chain", "ethereum", "--output", "s3://poap-scan-v2-data", "--environment", "test", "--provider-uri", "https://blue-aged-sky.quiknode.pro/c61b75ade31005d16b540da23759a45a9d4db7a9/", "-e", "block,transaction,log,trace,token_transfer,contract,receipt,token", "--batch-size", "10", "--start-block", "12345678"]
+ENTRYPOINT ["/tini", "--", "python", "ethereumetl"]
