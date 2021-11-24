@@ -96,7 +96,6 @@ class Streamer:
 
         if blocks_to_sync != 0:
             self.blockchain_streamer_adapter.export_all(self.last_synced_block + 1, target_block)
-            #self.blockchain_streamer_adapter.upload_to_s3()
             logging.info('Writing last synced block {}'.format(target_block))
             write_last_synced_block(self.last_synced_block_file, target_block)
             self.last_synced_block = target_block
