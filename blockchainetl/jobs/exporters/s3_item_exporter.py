@@ -14,15 +14,7 @@ from uuid import uuid4
 class S3ItemExporter(CompositeItemExporter):
 
     def __init__(self, filename_mapping=None, bucket=None, converters=(), environment='dev', chain='ethereum'):
-        self.filename_mapping = {
-                'block': 'blocks.csv',
-                'transaction': 'transactions.csv',
-                'log': 'logs.json',
-                'token_transfer': 'token_transfers.csv',
-                'trace': 'traces.csv',
-                'contract': 'contracts.csv',
-                'token': 'tokens.csv'
-                }
+        self.filename_mapping = filename_mapping
         self.field_mapping = {}
         self.file_mapping = {}
         self.exporter_mapping = {}
@@ -80,6 +72,7 @@ class S3ItemExporter(CompositeItemExporter):
             counter = self.counter_mapping[item_type]
             if counter is not None and (counter.increment() - 1) > 0 and (os.stat(file.name).st_size > 0):
                 self.logger.info('{} items exported: {}'.format(item_type, counter.increment() - 1))
+                self.logger.info('file name = {}'.format(file.name))
                 self.upload(self.bucket, file.name, item_type, self.extract_date_from_file(file.name), str(uuid4()) + '_' + file.name)
                 self.logger.info('Uploaded {} to S3'.format(item_type))
                 self.flush(file)
